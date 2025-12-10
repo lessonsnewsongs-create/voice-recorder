@@ -9,8 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "lucide-react": "^0.559.0",
     "next": "16.0.8",
     "react": "19.2.1",
+    "react-audio-visualizer-pro": "^0.4.1",
     "react-dom": "19.2.1"
   },
   "devDependencies": {
