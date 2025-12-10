@@ -184,7 +184,7 @@ export default function AudioRecorder() {
       while (true) {
         const pollingResponse = await fetch(`https://api.assemblyai.com/v2/transcript/${id}`, {
           headers: {
-            'authorization': 'd41f2097d45a4e8bafad51f986ecb7d9',
+            'authorization': 'afc9f57b9e0c42169ecfaa74a4047811',
           }
         });
 
