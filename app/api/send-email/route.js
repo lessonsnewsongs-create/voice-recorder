@@ -27,18 +27,26 @@ export async function POST(request) {
       );
     }
 
+    // Validate environment variables
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      return NextResponse.json(
+        { error: 'Email configuration is missing' },
+        { status: 500 }
+      );
+    }
+
     // Create transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "i221545@nu.edu.pk",
-        pass: "qfaj sdrs ksnp qhlz" // App password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
       }
     });
 
     // Send email
     await transporter.sendMail({
-      from: "i221545@nu.edu.pk",
+      from: process.env.EMAIL_USER,
       to: recipients.join(', '),
       subject: subject,
       html: htmlContent
