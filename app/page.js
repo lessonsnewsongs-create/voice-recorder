@@ -4,6 +4,7 @@ if (typeof window === "undefined") {
   require('dotenv').config();
 }
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { marked } from 'marked';
 import BackgroundAnimation from '@/components/BackgroundAnimation';
 import TimerDisplay from '@/components/TimerDisplay';
@@ -440,7 +441,11 @@ export default function AudioRecorder() {
         setMarkdownSummary(markdownText);
         setSummaryText(htmlSummary);
         setShowSummary(true);
-        setEmailSubject(`Summary: ${transcriptName}`);
+        setEmailSubject(transcriptName);
+        // Set default email recipient
+        if (!emailRecipients.includes('lessons.newsongs@gmail.com')) {
+          setEmailRecipients(['lessons.newsongs@gmail.com']);
+        }
       } else {
         throw new Error('Invalid response from Gemini API');
       }
@@ -542,6 +547,22 @@ export default function AudioRecorder() {
 
       {/* Animated background circles */}
       <BackgroundAnimation />
+
+      {/* Logo and Title - Top Left Corner */}
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 z-20 flex items-center gap-2 sm:gap-3">
+        <div className="relative h-12 sm:w-12 sm:h-12 md:w-14 md:h-14">
+          <Image 
+            src="/logo.png" 
+            alt="Lesson Assistant Logo" 
+            fill
+            className="object-contain drop-shadow-md"
+            priority
+          />
+        </div>
+        <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-stone-800 tracking-tight">
+          Lesson Assistant
+        </h1>
+      </div>
 
       <div className="z-10 flex flex-col items-center justify-center w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl space-y-6 sm:space-y-8 md:space-y-12 lg:space-y-14">
 
