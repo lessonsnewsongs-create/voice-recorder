@@ -443,8 +443,8 @@ export default function AudioRecorder() {
         setShowSummary(true);
         setEmailSubject(transcriptName);
         // Set default email recipient
-        if (!emailRecipients.includes('lessons.newsongs@gmail.com')) {
-          setEmailRecipients(['lessons.newsongs@gmail.com']);
+        if (!emailRecipients.includes('lesson.notes.newsongs@gmail.com')) {
+          setEmailRecipients(['lesson.notes.newsongs@gmail.com']);
         }
       } else {
         throw new Error('Invalid response from Gemini API');
