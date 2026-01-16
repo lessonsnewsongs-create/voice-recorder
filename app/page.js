@@ -447,7 +447,14 @@ export default function AudioRecorder() {
           setEmailRecipients(['lesson.notes.newsongs@gmail.com']);
         }
       } else {
-        throw new Error('Invalid response from Gemini API');
+        // Proceed to next step even if response is invalid
+        setMarkdownSummary('');
+        setSummaryText('');
+        setShowSummary(true);
+        setEmailSubject(transcriptName);
+        if (!emailRecipients.includes('lesson.notes.newsongs@gmail.com')) {
+          setEmailRecipients(['lesson.notes.newsongs@gmail.com']);
+        }
       }
     } catch (error) {
       console.error('Summarization error:', error);
