@@ -197,7 +197,7 @@ export default function AudioRecorder() {
         const uploadResponse = await fetch('https://api.assemblyai.com/v2/upload', {
           method: 'POST',
           headers: {
-            'authorization': 'afc9f57b9e0c42169ecfaa74a4047811',
+            'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
           },
           body: file
         });
@@ -208,7 +208,7 @@ export default function AudioRecorder() {
         const transcriptResponse = await fetch('https://api.assemblyai.com/v2/transcript', {
           method: 'POST',
           headers: {
-            'authorization': 'afc9f57b9e0c42169ecfaa74a4047811',
+            'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
             'content-type': 'application/json'
           },
           body: JSON.stringify({
@@ -216,14 +216,20 @@ export default function AudioRecorder() {
           })
         });
 
-        const { id } = await transcriptResponse.json();
+        const transcriptData = await transcriptResponse.json();
+        if (!transcriptResponse.ok || !transcriptData.id) {
+          console.error("Transcript creation failed:", transcriptData);
+          throw new Error("Failed to create transcript");
+        }
+
+        const id = transcriptData.id;
 
         // Poll for completion
         let transcript = null;
         while (true) {
           const pollingResponse = await fetch(`https://api.assemblyai.com/v2/transcript/${id}`, {
             headers: {
-              'authorization': 'afc9f57b9e0c42169ecfaa74a4047811',
+              'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
             }
           });
 
@@ -264,7 +270,7 @@ export default function AudioRecorder() {
       const uploadResponse = await fetch('https://api.assemblyai.com/v2/upload', {
         method: 'POST',
         headers: {
-          'authorization': 'afc9f57b9e0c42169ecfaa74a4047811',
+          'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
         },
         body: audioBlobRef
       });
@@ -275,7 +281,7 @@ export default function AudioRecorder() {
       const transcriptResponse = await fetch('https://api.assemblyai.com/v2/transcript', {
         method: 'POST',
         headers: {
-          'authorization': 'afc9f57b9e0c42169ecfaa74a4047811',
+          'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
           'content-type': 'application/json'
         },
         body: JSON.stringify({
@@ -283,14 +289,21 @@ export default function AudioRecorder() {
         })
       });
 
-      const { id } = await transcriptResponse.json();
+      const transcriptData = await transcriptResponse.json();
+
+      if (!transcriptResponse.ok || !transcriptData.id) {
+        console.error("Transcript creation failed:", transcriptData);
+        throw new Error("Failed to create transcript");
+      }
+
+      const id = transcriptData.id;
 
       // Step 3: Poll for transcription completion
       let transcript = null;
       while (true) {
         const pollingResponse = await fetch(`https://api.assemblyai.com/v2/transcript/${id}`, {
           headers: {
-            'authorization': 'afc9f57b9e0c42169ecfaa74a4047811',
+            'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
           }
         });
 
