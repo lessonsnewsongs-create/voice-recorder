@@ -197,7 +197,7 @@ export default function AudioRecorder() {
         const uploadResponse = await fetch('https://api.assemblyai.com/v2/upload', {
           method: 'POST',
           headers: {
-            'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
+            'authorization': 'b8b91a88b1184e5d85e104f6be374200',
           },
           body: file
         });
@@ -281,7 +281,7 @@ export default function AudioRecorder() {
       const transcriptResponse = await fetch('https://api.assemblyai.com/v2/transcript', {
         method: 'POST',
         headers: {
-          'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
+          'authorization': 'b8b91a88b1184e5d85e104f6be374200',
           'content-type': 'application/json'
         },
         body: JSON.stringify({
