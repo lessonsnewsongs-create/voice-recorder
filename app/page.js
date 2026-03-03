@@ -12,6 +12,7 @@ import ControlButtons from '@/components/ControlButtons';
 import TranscriptModal from '@/components/TranscriptModal';
 
 export default function AudioRecorder() {
+  const assemblyApiKey = process.env.NEXT_PUBLIC_ASSEMBLYAI_API_KEY;
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -183,6 +184,11 @@ export default function AudioRecorder() {
     input.onchange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
+
+      if (!assemblyApiKey) {
+        alert('Missing AssemblyAI API key. Please set NEXT_PUBLIC_ASSEMBLYAI_API_KEY.');
+        return;
+      }
       
       // Create URL for the uploaded audio
       const url = URL.createObjectURL(file);
@@ -197,18 +203,23 @@ export default function AudioRecorder() {
         const uploadResponse = await fetch('https://api.assemblyai.com/v2/upload', {
           method: 'POST',
           headers: {
-            'authorization': 'b8b91a88b1184e5d85e104f6be374200',
+            'authorization': assemblyApiKey,
           },
           body: file
         });
 
-        const { upload_url } = await uploadResponse.json();
+        const uploadData = await uploadResponse.json();
+        if (!uploadResponse.ok || !uploadData.upload_url) {
+          console.error('Upload failed:', uploadData);
+          throw new Error(uploadData.error || 'Failed to upload audio');
+        }
+        const { upload_url } = uploadData;
 
         // Request transcription
         const transcriptResponse = await fetch('https://api.assemblyai.com/v2/transcript', {
           method: 'POST',
           headers: {
-            'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
+            'authorization': assemblyApiKey,
             'content-type': 'application/json'
           },
           body: JSON.stringify({
@@ -229,7 +240,7 @@ export default function AudioRecorder() {
         while (true) {
           const pollingResponse = await fetch(`https://api.assemblyai.com/v2/transcript/${id}`, {
             headers: {
-              'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
+              'authorization': assemblyApiKey,
             }
           });
 
@@ -263,6 +274,11 @@ export default function AudioRecorder() {
       return;
     }
 
+    if (!assemblyApiKey) {
+      alert('Missing AssemblyAI API key. Please set NEXT_PUBLIC_ASSEMBLYAI_API_KEY.');
+      return;
+    }
+
     setIsTranscribing(true);
 
     try {
@@ -270,18 +286,23 @@ export default function AudioRecorder() {
       const uploadResponse = await fetch('https://api.assemblyai.com/v2/upload', {
         method: 'POST',
         headers: {
-          'authorization': '648f8b6d9a7e438c928a3f79a2095d45',
+          'authorization': assemblyApiKey,
         },
         body: audioBlobRef
       });
 
-      const { upload_url } = await uploadResponse.json();
+      const uploadData = await uploadResponse.json();
+      if (!uploadResponse.ok || !uploadData.upload_url) {
+        console.error('Upload failed:', uploadData);
+        throw new Error(uploadData.error || 'Failed to upload audio');
+      }
+      const { upload_url } = uploadData;
 
       // Step 2: Request transcription
       const transcriptResponse = await fetch('https://api.assemblyai.com/v2/transcript', {
         method: 'POST',
         headers: {
-          'authorization': 'b8b91a88b1184e5d85e104f6be374200',
+          'authorization': assemblyApiKey,
           'content-type': 'application/json'
         },
         body: JSON.stringify({
@@ -303,7 +324,7 @@ export default function AudioRecorder() {
       while (true) {
         const pollingResponse = await fetch(`https://api.assemblyai.com/v2/transcript/${id}`, {
           headers: {
-            'authorization': 'b8b91a88b1184e5d85e104f6be374200',
+            'authorization': assemblyApiKey,
           }
         });
 
@@ -575,6 +596,7 @@ export default function AudioRecorder() {
             src="/logo.png" 
             alt="Lesson Assistant Logo" 
             fill
+            sizes="(max-width: 640px) 48px, (max-width: 768px) 56px, 56px"
             className="object-contain drop-shadow-md"
             priority
           />
