@@ -406,71 +406,24 @@ export default function AudioRecorder() {
       setDriveUploadSuccess(false);
       setIsSummarizing(true);
 
-     const prompt = `
-        You are a professional music-lesson summary assistant.
-
-        Your job is to create a **friendly, parent-facing summary** of the class transcript I will provide.
-
-        ### STYLE & TONE
-        - Warm, encouraging, and easy for parents to understand  
-        - No technical music jargon unless explained simply  
-        - No markdown headings  
-        - Keep sentences simple and natural  
-        - Write as if the teacher is talking directly to the parent  
-        - Start with a friendly greeting like: 
-          "Hello! Your child had a great lesson today, and we made wonderful progress."
-
-        ### CONTENT RULES
-        - Extract only meaningful teaching moments from the transcript  
-        - Highlight what the child practiced and what they learned  
-        - Create a clear "Assignments and Practice" section  
-          including each exercise/piece and what to focus on  
-        - Provide simple "Practice Reminders" at the end  
-        - Do NOT add anything not mentioned in the transcript  
-        - Do NOT include filler, small talk, greetings between teacher/students  
-        - Keep it clean, clear, and parent-friendly  
-
-        ### OUTPUT FORMAT
-        Follow this structure exactly:
-
-        1. **Friendly Intro**  
-          A warm, positive 1–2 line greeting.
-
-        2. **Assignments and Practice**  
-          List each song/exercise and what the child should focus on.
-
-        3. **Today’s Lesson Summary**  
-          A short explanation of what concepts were taught today 
-          (notes, rhythms, hand placement, coordination, etc.).
-
-        4. **Practice Reminders**  
-          Simple bullet points to help parents guide practice at home.
-
-        ---
-
-        ### TRANSCRIPT:
-        ${transcriptText}
-        `;
-      const geminiApiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent?key=${geminiApiKey}`,
-      {
+      const response = await fetch('/api/summarize', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }]
-        })
+          transcriptText,
+        }),
       });
 
       const data = await response.json();
 
-      if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-        const markdownText = data.candidates[0].content.parts[0].text;
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to summarize transcript');
+      }
+
+      if (data.summary) {
+        const markdownText = data.summary;
         const htmlSummary = marked(markdownText);
         setMarkdownSummary(markdownText);
         setSummaryText(htmlSummary);

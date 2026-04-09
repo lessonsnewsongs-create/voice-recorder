@@ -20,6 +20,16 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment Notes
+
+For Gemini summarization, use a server-side `GEMINI_API_KEY` instead of exposing a public browser key.
+
+Recommended setup:
+
+- `GEMINI_API_KEY=...`
+- rotate any previously exposed Gemini key
+- remove `NEXT_PUBLIC_GEMINI_API_KEY` once the new server key is in place
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
